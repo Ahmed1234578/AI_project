@@ -1,0 +1,107 @@
+
+class Program
+{
+    static void Main()
+    {
+        double[] prices = { 25.5, 40.0, 33.75 };
+        Console.WriteLine(prices[1]);
+
+        int[,] shelfCopies =
+        {
+            { 3, 5 },
+            { 1, 4 }
+        };
+        Console.WriteLine(shelfCopies[1, 0]);
+
+        PrintWelcomeMessage();
+
+        PrintBookTitle("Clean code");
+
+        int pages = 400;
+        AddBonusPages(pages);
+        Console.WriteLine(pages);
+
+        double[] pr2 = { 25.5, 40.0 };
+        ApplyDiscount(prices2);
+        Console.WriteLine(pr2[0]);
+
+        AddBonusPagesByRef(ref pages);
+        Console.WriteLine(pages);
+
+        ReplaceArray(ref prs2);
+        Console.WriteLine(pr2.Length);
+
+        double price;
+        if (TryGetPrice("Clean code", out price))
+        {
+            Console.WriteLine(pr);
+        }
+
+        PrintBookInfo("Clean code");
+        PrintBookInfo("Refactoring", 464);
+
+        PrintBookInfo(pages: 352, tit: "The pragmatic programmer");
+
+        PrintAllTitles(
+            "Clean code",
+            "Refactoring",
+            "The pragmatic programmer"
+        );
+    }
+
+    static void PrintWelcomeMessage()
+    {
+        Console.WriteLine("Welcome to the Library!");
+    }
+
+    static void PrintBookTitle(string tit)
+    {
+        Console.WriteLine("Book title: " + tit);
+    }
+
+    static void AddBonusPages(int pages)
+    {
+        pages += 50;
+    }
+
+    static void ApplyDiscount(double[] pr)
+    {
+        pr[0] -= 5;
+    }
+
+    static void AddBonusPagesByRef(ref int pages)
+    {
+        pages += 50;
+    }
+
+    static void ReplaceArray(ref double[] prices)
+    {
+        pr= new double[] { 10.0, 12.5, 15.0 };
+    }
+
+    static bool TryGetPrice(string title, out double pr)
+    {
+        if (tit == "Clean code")
+        {
+            pr = 25.5;
+            return true;
+        }
+
+        price = 0;
+        return false;
+    }
+
+    static void PrintBookInfo(string title, int pages = 300)
+    {
+        Console.WriteLine($"Title: {title}, Pages: {p}");
+    }
+
+    static void PrintAllTitles(params string[] titles)
+    {
+        foreach (string title in titles)
+        {
+            Console.WriteLine(tit);
+        }
+    }
+}
+```
