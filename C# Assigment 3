@@ -1,122 +1,88 @@
-
+using System;
 
 class Program
 {
-    static void Main()
+    static void PrintWelcomeMessage()
     {
-        string title = "clean code";
-        string upperTitle = title.ToUpper();
-        Console.WriteLine(title);
-        Console.WriteLine(upperTitle);
-
-        string str1 = "Clean Code";
-        string str2 = "Clean Code";
-        Console.WriteLine(Object.ReferenceEquals(str1, str2));
-        StringBuilder sb = new StringBuilder();
-        sb.Append("Book List");
-        sb.Append(" - Updated");
-        Console.WriteLine(sb.ToString());
-
-        sb.Replace("Book List", "Library");
-        Console.WriteLine(sb.ToString());
-
-        title = "Clean Code";
-        int pages = 464;
-        string sentence1 = "Book: " + title + ", Pages: " + pages;
-        Console.WriteLine(sentence1);
-
-        string sentence2 = $"Book: {title}, Pages: {pages}";
-        Console.WriteLine(sentence2);
-        string sentence3 = string.Format("Book: {0}, Pages: {1}", title, pages);
-        Console.WriteLine(sentence3);
-
-        if (pages > 300)
-            Console.WriteLine("Long Book");
-        else
-            Console.WriteLine("Short Book");
-
-        bool isAvailable = true;
-        if (pages > 300 && isAvailable)
-            Console.WriteLine("You can borrow this book");
-
-        title = "Refactoring";
-
-        switch (title)
-        {
-            case "Clean Code":
-                Console.WriteLine("Great choice");
-                break;
-
-            case "Refactoring":
-                Console.WriteLine("Nice pick!");
-                break;
-
-            default:
-                Console.WriteLine("Never heard of it");
-                break;
-        }
-
-        string sizeLabel = (pages > 300) ? "Long Book" : "Short Book";
-        Console.WriteLine(sizeLabel);
-
-        string[] books =
-        {
-            "Clean Code",
-            "The Pragmatic Programmer",
-            "Refactoring"
-        };
-
-        for (int i = 0; i < books.Length; i++)
-        {
-            Console.WriteLine($"{i + 1}. {books[i]}");
-        }
-
-        int index = 0;
-        while (index < books.Length)
-        {
-            Console.WriteLine(books[index]);
-            index++;
-        }
-
-        int count = 0;
-        do
-        {
-            Console.WriteLine("Checking book");
-            count++;
-        } while (count < 3);
-
-        foreach (string book in books)
-        {
-            Console.WriteLine(book);
-        }
-
-      
-        foreach (string book in books)
-        {
-            Console.WriteLine(book);
-
-            if (book == "Refactoring")
-                break;
-        }
-
-        
-        foreach (string book in books)
-        {
-            if (book == "The Pragmatic programmer")
-                continue;
-
-            Console.WriteLine(book);
-        }
-
-        
-        PrintFirstBook(books);
     }
 
-    static void PrintFirstBook(string[] book)
+    static void PrintBookTitle(string title)
     {
-        if (books.Length == 0)
-            return;
+    }
 
-        Console.WriteLine(books[0]);
+    static void AddBonusPages(int pages)
+    {
+        pages += 50;
+    }
+
+    static void ApplyDiscount(double[] prices)
+    {
+        prices[0] -= 5;
+    }
+
+    static void AddBonusPagesByRef(ref int pages)
+    {
+        pages += 50;
+    }
+
+    static void ReplaceArray(ref double[] prices)
+    {
+        prices = new double[] { 10.0, 12.5, 15.0 };
+    }
+
+    static bool TryGetPrice(string title, out double price)
+    {
+        if (title == "Clean Code")
+        {
+            price = 25.5;
+            return true;
+        }
+
+        price = 0;
+        return false;
+    }
+
+    static void PrintBookInfo(string title, int pages = 300)
+    {
+    }
+
+    static void PrintAllTitles(params string[] titles)
+    {
+    }
+
+    static void Main(string[] args)
+    {
+        double[] prices = { 25.5, 40.0, 33.75 };
+
+        int[,] shelfCopies =
+        {
+            {3,5},
+            {1,4}
+        };
+
+        PrintWelcomeMessage();
+
+        PrintBookTitle("Clean Code");
+
+        int pages = 400;
+        AddBonusPages(pages);
+
+        double[] prices2 = { 25.5, 40.0 };
+        ApplyDiscount(prices2);
+
+        AddBonusPagesByRef(ref pages);
+
+        ReplaceArray(ref prices2);
+
+        double price;
+
+        TryGetPrice("Clean Code", out price);
+
+        PrintBookInfo("C# Basics");
+        PrintBookInfo("ASP.NET", 450);
+
+        PrintBookInfo(pages: 500, title: "Algorithms");
+
+        PrintAllTitles("Clean Code", "C# in Depth", "The Pragmatic Programmer");
     }
 }
