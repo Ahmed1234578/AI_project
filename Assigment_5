@@ -1,0 +1,86 @@
+class Program
+{
+    static void PrintWelcomeMessage()
+    {
+    }
+
+    static void PrintBookTitle(string title)
+    {
+    }
+
+    static void AddBonusPages(int pages)
+    {
+        pages += 50;
+    }
+
+    static void ApplyDiscount(double[] prices)
+    {
+        prices[0] -= 5;
+    }
+
+    static void AddBonusPagesByRef(ref int pages)
+    {
+        pages += 50;
+    }
+
+    static void ReplaceArray(ref double[] prices)
+    {
+        prices = new double[] { 10.0, 12.5, 15.0 };
+    }
+
+    static bool TryGetPrice(string title, out double price)
+    {
+        if (title == "Clean Code")
+        {
+            price = 25.5;
+            return true;
+        }
+
+        price = 0;
+        return false;
+    }
+
+    static void PrintBookInfo(string title, int pages = 300)
+    {
+    }
+
+    static void PrintAllTitles(params string[] titles)
+    {
+    }
+
+    static void Main(string[] args)
+    {
+        double[] prices = { 25.5, 40.0, 33.75 };
+
+        int[,] shelfCopies =
+        {
+            {3,5},
+            {1,4}
+        };
+
+        PrintWelcomeMessage();
+
+        PrintBookTitle("Clean Code");
+
+        int pages = 400;
+        AddBonusPages(pages);
+
+        double[] prices2 = { 25.5, 40.0 };
+        ApplyDiscount(prices2);
+
+        AddBonusPagesByRef(ref pages);
+
+        ReplaceArray(ref prices2);
+
+        double price;
+
+        TryGetPrice("Clean Code", out price);
+
+        PrintBookInfo("C# Basics");
+        PrintBookInfo("ASP.NET", 450);
+
+        PrintBookInfo(pages: 500, title: "Algorithms");
+
+        PrintAllTitles("Clean Code", "C# in Depth", "The Pragmatic Programmer");
+    }
+}
