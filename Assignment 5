@@ -1,0 +1,198 @@
+using System;
+
+namespace SmartDeliverySystem
+{
+    public class DeliveryAddress
+    {
+        public string City { get; set; }
+
+        public DeliveryAddress(string city)
+        {
+            City = city;
+        }
+
+        public DeliveryAddress Copy()
+        {
+            return new DeliveryAddress(this.City);
+        }
+    }
+
+    public partial class Shipment
+    {
+        public static int TotalShipmentsCreated = 0;
+
+        public string TrackingCode { get; set; }
+        public string ShipmentType { get; set; }
+        public double Weight { get; set; }
+        public DeliveryAddress Address { get; set; }
+
+        static Shipment()
+        {
+            TotalShipmentsCreated = 0;
+            Console.WriteLine("Shipment System Initialized");
+        }
+
+        public Shipment(string trackingCode, string shipmentType, double weight, DeliveryAddress address)
+        {
+            TrackingCode = trackingCode;
+            ShipmentType = shipmentType;
+            Weight = weight;
+            Address = address;
+            TrackingStatus = "In Transit";
+
+            TotalShipmentsCreated++;
+            Console.WriteLine($"{ShipmentType} Shipment Created");
+        }
+
+        public static int GetTotalShipmentsCreated()
+        {
+            return TotalShipmentsCreated;
+        }
+
+        public Shipment CopyShipment()
+        {
+            return this;
+        }
+
+        public Shipment ShallowCopy()
+        {
+            return (Shipment)this.MemberwiseClone();
+        }
+
+        public Shipment DeepCopy()
+        {
+            Shipment copy = (Shipment)this.MemberwiseClone();
+            copy.Address = new DeliveryAddress(this.Address.City);
+            return copy;
+        }
+    }
+
+    public partial class Shipment
+    {
+        public string TrackingStatus { get; set; }
+
+        partial void OnTrackingStatusChanged(string newStatus);
+
+        public string GetTrackingStatus()
+        {
+            return TrackingStatus;
+        }
+
+        public void UpdateTrackingStatus(string newStatus)
+        {
+            TrackingStatus = newStatus;
+            OnTrackingStatusChanged(newStatus);
+        }
+
+        partial void OnTrackingStatusChanged(string newStatus)
+        {
+            Console.WriteLine($"Tracking status changed to: {newStatus}");
+        }
+    }
+
+    public static class DeliveryUtilities
+    {
+        public static void PrintSeparator()
+        {
+            Console.WriteLine("==========================================");
+        }
+
+        public static void PrintSystemTitle()
+        {
+            PrintSeparator();
+            Console.WriteLine("Smart Delivery Management System");
+            PrintSeparator();
+        }
+    }
+
+    public static class ShipmentExtensions
+    {
+        public static string GetSummary(this Shipment shipment)
+        {
+            return $"{shipment.TrackingCode} | {shipment.ShipmentType} | {shipment.Weight} KG | {shipment.TrackingStatus}";
+        }
+
+        public static bool IsDelivered(this Shipment shipment)
+        {
+            return shipment.TrackingStatus == "Delivered";
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            DeliveryUtilities.PrintSystemTitle();
+
+            Console.WriteLine("Creating Shipments...");
+            DeliveryUtilities.PrintSeparator();
+
+            Shipment shipment1 = new Shipment("SH001", "Standard", 3, new DeliveryAddress("Cairo"));
+            Shipment shipment2 = new Shipment("SH002", "Express", 2, new DeliveryAddress("Alexandria"));
+            Shipment shipment3 = new Shipment("SH003", "International", 8, new DeliveryAddress("Giza"));
+
+            Console.WriteLine($"Total Shipments Created: {Shipment.GetTotalShipmentsCreated()}");
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine("Object Copying");
+            DeliveryUtilities.PrintSeparator();
+            Shipment assignedShipment = shipment1;
+            Console.WriteLine($"Original Shipment : {shipment1.TrackingCode}");
+            Console.WriteLine($"Assigned Shipment : {assignedShipment.TrackingCode}");
+            Console.WriteLine($"Same Object: {ReferenceEquals(shipment1, assignedShipment)}");
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine("Shallow Copy");
+            Shipment shallowCopiedShipment = shipment1.ShallowCopy();
+            Console.WriteLine($"Original Shipment Address: {shipment1.Address.City}");
+            Console.WriteLine($"Copied Shipment Address  : {shallowCopiedShipment.Address.City}");
+            Console.WriteLine("Changing copied shipment address...");
+            shallowCopiedShipment.Address.City = "Giza";
+            Console.WriteLine($"Original Shipment Address: {shipment1.Address.City}");
+            Console.WriteLine($"Copied Shipment Address  : {shallowCopiedShipment.Address.City}");
+            Console.WriteLine($"Same DeliveryAddress Object: {ReferenceEquals(shipment1.Address, shallowCopiedShipment.Address)}");
+            DeliveryUtilities.PrintSeparator();
+
+            shipment1.Address.City = "Cairo";
+
+            Console.WriteLine("Deep Copy");
+            Shipment deepCopiedShipment = shipment1.DeepCopy();
+            Console.WriteLine($"Original Shipment Address: {shipment1.Address.City}");
+            Console.WriteLine($"Copied Shipment Address  : {deepCopiedShipment.Address.City}");
+            Console.WriteLine("Changing copied shipment address...");
+            deepCopiedShipment.Address.City = "Giza";
+            Console.WriteLine($"Original Shipment Address: {shipment1.Address.City}");
+            Console.WriteLine($"Copied Shipment Address  : {deepCopiedShipment.Address.City}");
+            Console.WriteLine($"Same DeliveryAddress Object: {ReferenceEquals(shipment1.Address, deepCopiedShipment.Address)}");
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine("Extension Methods");
+            DeliveryUtilities.PrintSeparator();
+            Console.WriteLine(shipment1.GetSummary());
+
+            shipment2.UpdateTrackingStatus("Out For Delivery");
+            Console.WriteLine(shipment2.GetSummary());
+
+            shipment3.UpdateTrackingStatus("Delivered");
+            Console.WriteLine(shipment3.GetSummary());
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine($"SH001 Is Delivered: {shipment1.IsDelivered()}");
+            Console.WriteLine($"SH003 Is Delivered: {shipment3.IsDelivered()}");
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine("Static Utilities");
+            Console.WriteLine("Delivery Center");
+            Console.WriteLine($"Total Shipments Created: {Shipment.GetTotalShipmentsCreated()}");
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine("Partial Method");
+            DeliveryUtilities.PrintSeparator();
+            shipment1.UpdateTrackingStatus("Out For Delivery");
+            DeliveryUtilities.PrintSeparator();
+
+            Console.WriteLine("Assignment Completed");
+            DeliveryUtilities.PrintSeparator();
+        }
+    }
+}
