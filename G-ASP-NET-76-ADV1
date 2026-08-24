@@ -1,0 +1,295 @@
+// Q1: What is a generic class? Why use generics?
+// Answer:
+// A generic class uses a type parameter such as T.
+// Generics provide type safety and code reuse.
+
+
+// Q2: Write a generic class Container<T> with Add and Get methods.
+class Container<T>
+{
+    List<T> items = new List<T>();
+
+    public void Add(T item)
+    {
+        items.Add(item);
+    }
+
+    public T Get(int index)
+    {
+        return items[index];
+    }
+}
+
+
+// Q3: What are multiple type parameters? Write Pair<TKey, TValue>.
+// Answer:
+// Multiple type parameters allow a generic class to use more than one type.
+
+class Pair<TKey, TValue>
+{
+    public TKey Key;
+    public TValue Value;
+
+    public Pair(TKey key, TValue value)
+    {
+        Key = key;
+        Value = value;
+    }
+}
+
+
+// Q4: What is a generic method? Write Swap<T> method.
+// Answer:
+// A generic method has its own type parameter.
+
+static void Swap<T>(ref T a, ref T b)
+{
+    T temp = a;
+    a = b;
+    b = temp;
+}
+
+
+// Q5: Write a generic method FindMax<T> that finds maximum value.
+// Answer:
+// IComparable<T> allows the values to be compared.
+
+static T FindMax<T>(T[] values)
+    where T : IComparable<T>
+{
+    T max = values[0];
+
+    for (int i = 1; i < values.Length; i++)
+    {
+        if (values[i].CompareTo(max) > 0)
+            max = values[i];
+    }
+
+    return max;
+}
+
+
+// Q6: What is a generic interface? Write IRepository<T>.
+// Answer:
+// A generic interface uses a type parameter.
+
+interface IRepository<T>
+{
+    void Add(T item);
+    T GetById(int id);
+    void Remove(int id);
+    IEnumerable<T> GetAll();
+}
+
+
+// Q7: What is the 'struct' constraint? Write an example.
+// Answer:
+// struct means T must be a value type.
+
+class Box<T> where T : struct
+{
+    public T Value;
+}
+
+
+// Q8: What is the 'class' constraint? Write an example.
+// Answer:
+// class means T must be a reference type.
+
+class Repository<T> where T : class
+{
+    public T Item;
+}
+
+
+// Q9: What is the 'new()' constraint? Write an example.
+// Answer:
+// new() means T must have a public parameterless constructor.
+
+class Factory<T> where T : new()
+{
+    public T Create()
+    {
+        return new T();
+    }
+}
+
+
+// Q10: What is the interface constraint? Write an example.
+// Answer:
+// The interface constraint requires T to implement an interface.
+
+class Printer<T> where T : IPrintable
+{
+    public void Print(T item)
+    {
+        item.Print();
+    }
+}
+
+
+// Q11: What is the base class constraint? Write an example.
+// Answer:
+// The base class constraint requires T to inherit from a specific class.
+
+class AnimalBox<T> where T : Animal
+{
+    public void Feed(T animal)
+    {
+        animal.Eat();
+    }
+}
+
+
+// Q12: How do you apply multiple constraints? Write an example.
+// Answer:
+// Multiple constraints can be written together.
+
+class Service<T>
+    where T : BaseEntity, IPrintable, new()
+{
+    public T Create()
+    {
+        return new T();
+    }
+}
+
+
+// Q13: What does the 'default' keyword do in generics?
+// Answer:
+// default(T) returns the default value of T.
+// For example: int -> 0, bool -> false, string -> null.
+
+static T GetDefault<T>()
+{
+    return default(T);
+}
+
+
+// Q14: Write a SafeList<T> that returns default when the index is invalid.
+// Answer:
+// Return default(T) when the index is invalid.
+
+class SafeList<T>
+{
+    List<T> items = new List<T>();
+
+    public void Add(T item)
+    {
+        items.Add(item);
+    }
+
+    public T Get(int index)
+    {
+        if (index < 0 || index >= items.Count)
+            return default(T);
+
+        return items[index];
+    }
+}
+
+
+// Q15: What is covariance? Explain the 'out' keyword.
+// Answer:
+// Covariance uses out and allows a derived type to be used as a base type.
+
+IEnumerable<string> names = new List<string>();
+IEnumerable<object> objects = names;
+
+
+// Q16: What is contravariance? Explain the 'in' keyword.
+// Answer:
+// Contravariance uses in and works in the opposite direction.
+
+Action<object> printObject =
+    obj => Console.WriteLine(obj);
+
+Action<string> printString = printObject;
+
+
+// Q17: What is the difference between covariance and contravariance?
+// Answer:
+// Covariance uses out and works from derived type to base type.
+// Contravariance uses in and works from base type to derived type.
+
+
+// Q18: How do static members work in generic types?
+// Answer:
+// Each constructed generic type has separate static members.
+// Counter<int>.Count and Counter<string>.Count are separate.
+
+class Counter<T>
+{
+    public static int Count;
+}
+
+
+// Q19: How can you inherit from a generic class?
+// Answer:
+// A class can inherit from a constructed generic class.
+
+class Repository<T>
+{
+    public T Get()
+    {
+        return default(T);
+    }
+}
+
+class StudentRepository : Repository<Student>
+{
+}
+
+
+// Q20: Create a generic Cache<TKey, TValue> with Add, Get, Remove,
+// Contains, and expiration support.
+
+class Cache<TKey, TValue>
+{
+    class Item
+    {
+        public TValue Value;
+        public DateTime Expiration;
+    }
+
+    Dictionary<TKey, Item> items =
+        new Dictionary<TKey, Item>();
+
+    public void Add(TKey key, TValue value,
+                    TimeSpan lifetime)
+    {
+        items[key] = new Item
+        {
+            Value = value,
+            Expiration = DateTime.UtcNow.Add(lifetime)
+        };
+    }
+
+    public bool Get(TKey key, out TValue value)
+    {
+        if (items.TryGetValue(key, out Item item))
+        {
+            if (DateTime.UtcNow < item.Expiration)
+            {
+                value = item.Value;
+                return true;
+            }
+
+            items.Remove(key);
+        }
+
+        value = default(TValue);
+        return false;
+    }
+
+    public bool Contains(TKey key)
+    {
+        TValue value;
+        return Get(key, out value);
+    }
+
+    public bool Remove(TKey key)
+    {
+        return items.Remove(key);
+    }
+}
